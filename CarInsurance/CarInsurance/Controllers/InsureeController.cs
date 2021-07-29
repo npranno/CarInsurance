@@ -50,6 +50,7 @@ namespace CarInsurance.Controllers
         {
             if (ModelState.IsValid)
             {
+                insuree.Quote = QuoteLogic(insuree);
                 db.Insurees.Add(insuree);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -82,6 +83,7 @@ namespace CarInsurance.Controllers
         {
             if (ModelState.IsValid)
             {
+                insuree.Quote = QuoteLogic(insuree);
                 db.Entry(insuree).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -141,16 +143,16 @@ namespace CarInsurance.Controllers
             return View(listInsuree);
         }
 
-        private double quoteLogic(Insuree insuree)
+        private decimal QuoteLogic(Insuree insuree)
         {
-            double quote = 50;
+            decimal quote = 50;
             int age = new DateTime(DateTime.Now.Subtract(Convert.ToDateTime(insuree.DateOfBirth)).Ticks).Year - 1;
 
-            if (age < 18)
+            if (age < 19)
             {
                 quote += 100;
             }
-            else if (age > 18 && age < 25)
+            else if (age >= 19 && age <= 25)
             {
                 quote += 50;
             }
@@ -178,12 +180,12 @@ namespace CarInsurance.Controllers
 
             if (Convert.ToBoolean(insuree.DUI))
             {
-                quote += quote * .25;
+                quote += quote * .25m;
             }
 
             if (Convert.ToBoolean(insuree.CoverageType))
             {
-                quote += quote * .5;
+                quote += quote * .5m;
             }
 
             return quote;
